@@ -7,7 +7,8 @@
 <meta name="description" content="Datenschutzerklärung der Website luense.ch">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0F2C47">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2318232B'/%3E%3Crect x='7' y='7' width='8' height='8' fill='%23D97B18'/%3E%3Crect x='17' y='7' width='8' height='8' fill='%23566570'/%3E%3Crect x='7' y='17' width='8' height='8' fill='%23566570'/%3E%3Crect x='17' y='17' width='8' height='8' fill='%23D97B18'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"%3E%3Crect width="512" height="512" rx="80" fill="#26333D"/%3E%3Cg stroke="#D97B18" stroke-width="36" stroke-linecap="round" fill="none"%3E%3Ccircle cx="256" cy="256" r="128"/%3E%3Cpath d="M256 30V98M256 414V482M30 256H98M414 256H482"/%3E%3C/g%3E%3Ccircle cx="256" cy="256" r="27" fill="#D97B18"/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/barlow-semi-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/ibm-plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -42,7 +43,7 @@ h1,h2,h3{font-family:var(--disp);font-weight:700;line-height:1;letter-spacing:-.
 .bar{position:sticky;top:0;z-index:50;background:var(--bar-bg);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--bar-line)}
 .bar .wrap{display:flex;align-items:center;gap:28px;height:66px}
 .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--bar-ink)}
-.mark{width:26px;height:26px;border-radius:6px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;flex:0 0 auto}
+.mark{width:30px;height:30px;display:block;flex:0 0 auto}
 .mark i:nth-child(1),.mark i:nth-child(4){background:var(--orange)}
 .mark i:nth-child(2),.mark i:nth-child(3){background:var(--mark-2,#566570)}
 .brand b{font-family:var(--disp);font-weight:700;font-size:1.25rem;letter-spacing:.01em}
@@ -298,7 +299,7 @@ footer a:hover{color:var(--orange)}
 <body>
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="./" aria-label="Lünse, zur Startseite"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>Lünse</b></a>
+    <a class="brand" href="./" aria-label="Lünse, zur Startseite"><svg class="mark" viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="80" fill="#26333D"/><g stroke="#D97B18" stroke-width="36" stroke-linecap="round" fill="none"><circle cx="256" cy="256" r="128"/><path d="M256 30V98M256 414V482M30 256H98M414 256H482"/></g><circle cx="256" cy="256" r="27" fill="#D97B18"/></svg><b>Lünse</b></a>
     <a class="tel" href="tel:+41798661885">+41 79 866 18 85<span> · anrufen</span></a>
   </div>
 </header>
