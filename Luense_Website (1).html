@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lünse – Ihr Baustellen-Cockpit</title>
+<meta name="description" content="Lokale Software für Bauführer: Rapporte, Regie, Ausmass und Fotos pro Baustelle erfassen – und daraus die Sammelrechnung erstellen. Von einem Bauführer entwickelt. Läuft lokal, kein Abo, keine Cloud.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%2317242E'/%3E%3Crect x='7' y='7' width='8' height='8' fill='%23EA6A1E'/%3E%3Crect x='17' y='7' width='8' height='8' fill='%23566570'/%3E%3Crect x='7' y='17' width='8' height='8' fill='%23566570'/%3E%3Crect x='17' y='17' width='8' height='8' fill='%23EA6A1E'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --concrete:#ECEEF0; --paper:#FFFFFF; --steel:#17242E; --steel-2:#1F303B;
+    --orange:#EA6A1E; --orange-press:#CF5A12; --ink:#243039; --mute:#5C6B76;
+    --line:#CDD3D8; --line-dark:#33454F;
+    --disp:'Barlow Semi Condensed',Arial,sans-serif;
+    --body:'IBM Plex Sans',Arial,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --wrap:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:var(--concrete);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--disp);font-weight:700;line-height:.98;letter-spacing:-.01em}
+  .eyebrow{font-family:var(--mono);font-weight:600;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange)}
+
+  /* ---- top bar ---- */
+  .bar{position:sticky;top:0;z-index:50;background:rgba(23,36,46,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line-dark)}
+  .bar .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none}
+  .mark{width:26px;height:26px;border-radius:5px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;flex:0 0 auto}
+  .mark i{display:block}
+  .mark i:nth-child(1),.mark i:nth-child(4){background:var(--orange)}
+  .mark i:nth-child(2),.mark i:nth-child(3){background:#566570}
+  .brand b{font-family:var(--disp);font-weight:700;font-size:1.18rem;letter-spacing:.01em}
+  .bar .tel{font-family:var(--mono);font-weight:600;font-size:.86rem;color:#fff;text-decoration:none;border:1px solid var(--line-dark);padding:9px 14px;border-radius:7px;transition:.18s}
+  .bar .tel:hover{border-color:var(--orange);color:var(--orange)}
+  @media(max-width:560px){.bar .tel span{display:none}.brand b{font-size:1.05rem}}
+
+  /* ---- hero ---- */
+  .hero{background:var(--steel);color:#E8ECEF;position:relative;overflow:hidden;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:34px 34px}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:54px;align-items:center;padding-top:78px;padding-bottom:84px}
+  .hero h1{font-size:clamp(2.7rem,6vw,4.7rem);color:#fff;margin:18px 0 0}
+  .hero h1 .hl{color:var(--orange)}
+  .hero .lead{font-size:clamp(1.05rem,1.6vw,1.25rem);color:#BFCAD1;margin-top:22px;max-width:30em}
+  .trust{font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;color:#8E9AA3;margin-top:26px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .trust .dot{width:5px;height:5px;border-radius:50%;background:var(--orange);display:inline-block}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .btn{font-family:var(--disp);font-weight:600;font-size:1.05rem;letter-spacing:.01em;text-decoration:none;padding:14px 24px;border-radius:8px;display:inline-flex;align-items:center;gap:9px;transition:.18s;border:1px solid transparent}
+  .btn-pri{background:var(--orange);color:#fff}
+  .btn-pri:hover{background:var(--orange-press)}
+  .btn-ghost{border-color:#3C4E58;color:#E8ECEF}
+  .btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
+
+  /* hero panel = Lünse */
+  .panel{background:#16212A;border:1px solid #2C3D47;border-radius:11px;box-shadow:0 24px 60px -28px rgba(0,0,0,.6);overflow:hidden}
+  .panel .head{display:flex;align-items:center;gap:8px;padding:12px 15px;border-bottom:1px solid #283842;background:#1B2832}
+  .panel .head .pip{width:10px;height:10px;border-radius:50%;background:#37474F}
+  .panel .head .pip.on{background:var(--orange)}
+  .panel .head span{font-family:var(--mono);font-size:.72rem;color:#7E8C95;margin-left:auto;letter-spacing:.05em}
+  .panel .body{padding:16px 16px 18px}
+  .panel .ttl{font-family:var(--mono);font-size:.72rem;color:#8E9AA3;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+  .row{display:grid;grid-template-columns:1fr auto auto;gap:10px;font-family:var(--mono);font-size:.82rem;color:#C7D0D6;padding:8px 0;border-bottom:1px dashed #283842}
+  .row b{color:#fff;font-weight:600}
+  .row .pos{color:#7E8C95}
+  .sum{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:13px 14px;background:rgba(234,106,30,.12);border:1px solid rgba(234,106,30,.4);border-radius:8px}
+  .sum .lbl{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;color:#F2B98C}
+  .sum .val{font-family:var(--disp);font-weight:700;font-size:1.45rem;color:#fff}
+  @media(max-width:860px){.hero .wrap{grid-template-columns:1fr;gap:40px;padding-top:54px;padding-bottom:60px}.panel{max-width:440px}}
+
+  /* ---- generic section ---- */
+  section{padding:clamp(3.6rem,8vw,6.4rem) 0}
+  .sec-head{max-width:46em;margin-bottom:46px}
+  .sec-head h2{font-size:clamp(1.95rem,3.6vw,2.9rem);color:var(--ink);margin-top:12px}
+  .sec-head p{color:var(--mute);font-size:1.08rem;margin-top:16px}
+
+  /* problem list */
+  .probs{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .prob{background:var(--concrete);padding:30px 28px}
+  .prob .st{font-family:var(--mono);font-size:.74rem;color:var(--orange);letter-spacing:.1em}
+  .prob h3{font-family:var(--disp);font-weight:600;font-size:1.45rem;color:var(--ink);margin:12px 0 8px;line-height:1.05}
+  .prob p{color:var(--mute);font-size:.97rem}
+  @media(max-width:680px){.probs{grid-template-columns:1fr}}
+
+  /* features */
+  .feat-sec{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .feats{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .feat{padding:28px 26px;border:1px solid var(--line);border-radius:11px;background:var(--concrete);transition:.2s}
+  .feat:hover{border-color:var(--orange);transform:translateY(-3px)}
+  .feat .tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);display:inline-block;border:1px solid var(--line);padding:5px 9px;border-radius:5px;background:var(--paper)}
+  .feat h3{font-family:var(--disp);font-weight:600;font-size:1.4rem;color:var(--ink);margin:18px 0 9px;line-height:1.05}
+  .feat p{color:var(--mute);font-size:.97rem}
+  @media(max-width:860px){.feats{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.feats{grid-template-columns:1fr}}
+
+  /* maker / about */
+  .maker{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:center}
+  .maker .quote{font-family:var(--disp);font-weight:600;font-size:clamp(1.5rem,2.6vw,2.05rem);line-height:1.15;color:var(--ink)}
+  .maker .quote em{color:var(--orange);font-style:normal}
+  .maker .who{font-family:var(--mono);font-size:.82rem;color:var(--mute);margin-top:22px;letter-spacing:.03em}
+  .card-fact{background:var(--steel);color:#D7DEE2;border-radius:11px;padding:32px 30px}
+  .card-fact h3{font-family:var(--disp);color:#fff;font-size:1.5rem;margin-bottom:16px}
+  .card-fact ul{list-style:none;display:grid;gap:13px}
+  .card-fact li{padding-left:24px;position:relative;font-size:1rem;color:#C2CCD2}
+  .card-fact li::before{content:"";position:absolute;left:0;top:.55em;width:9px;height:9px;background:var(--orange)}
+  @media(max-width:780px){.maker{grid-template-columns:1fr;gap:32px}}
+
+  /* pilot */
+  .pilot-sec{background:var(--steel);color:#E8ECEF;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:34px 34px}
+  .pilot{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
+  .pilot h2{color:#fff;font-size:clamp(1.95rem,3.6vw,2.8rem)}
+  .pilot p{color:#BFCAD1;margin-top:18px;font-size:1.06rem}
+  .pilot .badge{font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);border:1px solid #3C4E58;display:inline-block;padding:7px 12px;border-radius:6px;margin-bottom:18px}
+  .terms{list-style:none;display:grid;gap:14px}
+  .terms li{display:flex;gap:13px;align-items:flex-start;font-size:1rem;color:#D2DAE0}
+  .terms .n{font-family:var(--mono);color:var(--orange);font-weight:600;flex:0 0 auto}
+  @media(max-width:780px){.pilot{grid-template-columns:1fr;gap:28px}}
+
+  /* contact */
+  .contact{text-align:center}
+  .contact h2{font-size:clamp(2.1rem,4.4vw,3.2rem);color:var(--ink)}
+  .contact p{color:var(--mute);font-size:1.12rem;margin:16px auto 0;max-width:34em}
+  .contact .cta-row{justify-content:center}
+  .lines{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:34px;font-family:var(--mono);font-size:.92rem}
+  .lines a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--orange);padding-bottom:2px}
+
+  /* footer */
+  footer{background:var(--steel-2);color:#8E9AA3;padding:30px 0;font-family:var(--mono);font-size:.78rem;letter-spacing:.03em}
+  footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+  footer b{color:#C2CCD2;font-weight:600}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark"><i></i><i></i><i></i><i></i></span><b>Lünse</b></a>
+    <a class="tel" href="tel:+41798661885">+41 79 866 18 85<span> · anrufen</span></a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Lokale Software für Bauunternehmen</span>
+        <h1>Keine Regiestunde geht mehr <span class="hl">verloren.</span></h1>
+        <p class="lead">Rapporte, Regie, Ausmass, Lieferscheine und Fotos pro Baustelle erfassen – und daraus mit wenigen Klicks die Sammelrechnung erstellen. Schneller fakturieren, lückenlos dokumentiert.</p>
+        <div class="trust"><span class="dot"></span> Von einem Bauführer entwickelt <span class="dot"></span> Läuft lokal <span class="dot"></span> Kein Abo, keine Cloud</div>
+        <div class="cta-row">
+          <a class="btn btn-pri" href="mailto:tobias@luense.ch?subject=Demo%20L%C3%BCnse&body=Gr%C3%BCezi%20Herr%20Vogel%0D%0A%0D%0AWir%20w%C3%BCrden%20uns%20gerne%20eine%20Demo%20anschauen.%0D%0A%0D%0AFirma%3A%20%0D%0AAnsprechperson%3A%20%0D%0ATelefon%3A%20%0D%0A%0D%0AFreundliche%20Gr%C3%BCsse">Demo anfragen</a>
+          <a class="btn btn-ghost" href="#funktion">So funktioniert's</a>
+        </div>
+      </div>
+
+      <div class="panel" aria-hidden="true">
+        <div class="head"><span class="pip on"></span><span class="pip"></span><span class="pip"></span><span>Baustelle 0420 · Sanierung Dorfstrasse</span></div>
+        <div class="body">
+          <div class="ttl">Rapport · Woche 14</div>
+          <div class="row"><span class="pos">Regie · Maurer</span><b>14.5 h</b><span class="pos">→</span></div>
+          <div class="row"><span class="pos">Regie · Bagger</span><b>6.0 h</b><span class="pos">→</span></div>
+          <div class="row"><span class="pos">Material · Mischabgut</span><b>3 Fuhren</b><span class="pos">→</span></div>
+          <div class="row"><span class="pos">Lieferschein + Foto</span><b>erfasst</b><span class="pos">✓</span></div>
+          <div class="sum"><span class="lbl">→ Sammelrechnung erstellt</span><span class="val">CHF 4'180.–</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head rv">
+        <span class="eyebrow">Station 1+00 · Das Problem</span>
+        <h2>Was Sie aus dem Alltag kennen.</h2>
+        <p>Der grösste Teil verlorener Marge entsteht nicht auf der Baustelle, sondern danach – beim Übertragen, Suchen und Verrechnen.</p>
+      </div>
+      <div class="probs rv">
+        <div class="prob"><div class="st">01</div><h3>Vergessene Regie</h3><p>Leistungen, die auf dem Weg vom Rapport ins Büro untergehen – jede davon ist verschenktes Geld.</p></div>
+        <div class="prob"><div class="st">02</div><h3>Doppelerfassung</h3><p>Auf der Baustelle auf Papier, im Büro nochmals ins System getippt. Doppelte Arbeit, doppelte Fehlerquelle.</p></div>
+        <div class="prob"><div class="st">03</div><h3>Langsame Fakturierung</h3><p>Vom letzten Rapport bis zur Rechnung vergehen Wochen – das kostet Liquidität.</p></div>
+        <div class="prob"><div class="st">04</div><h3>Verstreute Doku</h3><p>Fotos, Lieferscheine und Ausmasse liegen überall – im Streitfall fehlt der Nachweis.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="feat-sec" id="funktion">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <span class="eyebrow">Station 2+00 · Das Cockpit</span>
+        <h2>Alles zu einer Baustelle. An einem Ort.</h2>
+        <p>Einmal erfasst, sofort weiterverwendbar – von der Baustelle bis zur Rechnung.</p>
+      </div>
+      <div class="feats">
+        <div class="feat rv"><span class="tag">Erfassen</span><h3>Rapport & Regie</h3><p>Stunden, Maschinen, Material und Regie pro Baustelle festhalten – schnell, wie es auf dem Bau läuft.</p></div>
+        <div class="feat rv"><span class="tag">Fakturieren</span><h3>Sammelrechnung</h3><p>Aus den Rapporten und dem Ausmass mit wenigen Klicks die Sammelrechnung pro Baustelle erzeugen.</p></div>
+        <div class="feat rv"><span class="tag">Offerieren</span><h3>Offerten nach NPK</h3><p>Strukturiert nach dem Schweizer NPK-Katalog offerieren – sauber, nachvollziehbar, in einem Bruchteil der Zeit.</p></div>
+        <div class="feat rv"><span class="tag">Dokumentieren</span><h3>Fotos & Lieferscheine</h3><p>Fotos, Lieferscheine, Pendenzen und Rückfragen direkt der Baustelle zuordnen – nichts geht verloren.</p></div>
+        <div class="feat rv"><span class="tag">Lokal</span><h3>Daten bleiben im Haus</h3><p>Läuft als Programm auf Ihrem Rechner. Keine Cloud, kein externer Server, kein Abo-Zwang.</p></div>
+        <div class="feat rv"><span class="tag">Praxisnah</span><h3>Vom Bau gedacht</h3><p>Entwickelt von einem aktiven Bauführer – die Software passt sich Ihrem Ablauf an, nicht umgekehrt.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAKER -->
+  <section>
+    <div class="wrap maker">
+      <div class="rv">
+        <span class="eyebrow">Station 3+00 · Wer dahintersteht</span>
+        <p class="quote">„Ich habe Lünse gebaut, weil mich der Papierkram bei Regie und Rapporten selber jeden Tag <em>genervt hat.</em>"</p>
+        <p class="who">Tobias Vogel · Bauführer, Region Aargau · Entwickler von Lünse</p>
+      </div>
+      <div class="card-fact rv">
+        <h3>Warum das den Unterschied macht</h3>
+        <ul>
+          <li>Kein Verkäufer, sondern ein Berufskollege, der Ihren Alltag kennt.</li>
+          <li>Kurze Einarbeitung – die Begriffe und Abläufe stimmen mit dem Bau überein.</li>
+          <li>Schweizer Lösung: NPK, MwSt und Rappenrundung sind berücksichtigt.</li>
+          <li>Direkter Draht zum Entwickler statt Hotline-Warteschlange.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILOT -->
+  <section class="pilot-sec">
+    <div class="wrap pilot">
+      <div class="rv">
+        <span class="badge">Pilotprogramm</span>
+        <h2>Werden Sie einer der ersten Betriebe.</h2>
+        <p>Für den Start suche ich eine kleine Gruppe Pilotbetriebe, die Lünse zu Vorzugskonditionen einsetzen – im Tausch gegen ehrliches Feedback und, wenn es passt, eine Referenz.</p>
+      </div>
+      <ul class="terms rv">
+        <li><span class="n">01</span><span>Reduzierter Pilotpreis inklusive erstem Jahr Wartung.</span></li>
+        <li><span class="n">02</span><span>30 Tage unverbindlich an einer echten Baustelle testen.</span></li>
+        <li><span class="n">03</span><span>Ihre Wünsche fliessen direkt in die Weiterentwicklung ein.</span></li>
+        <li><span class="n">04</span><span>Als Gründungskunde später Vorzugskonditionen auf neue Versionen.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="kontakt">
+    <div class="wrap">
+      <div class="rv">
+        <span class="eyebrow">Station 4+00 · Kontakt</span>
+        <h2>20 Minuten. Ihre Baustelle. Ihre Zahlen.</h2>
+        <p>Am besten zeige ich es Ihnen direkt an einem Ihrer Projekte – online oder bei Ihnen vor Ort. Rufen Sie an oder schreiben Sie kurz.</p>
+        <div class="cta-row">
+          <a class="btn btn-pri" href="tel:+41798661885">Anrufen: +41 79 866 18 85</a>
+          <a class="btn btn-ghost" style="border-color:var(--line);color:var(--ink)" href="mailto:tobias@luense.ch?subject=Demo%20L%C3%BCnse">E-Mail schreiben</a>
+        </div>
+        <div class="lines">
+          <a href="tel:+41798661885">+41 79 866 18 85</a>
+          <a href="mailto:tobias@luense.ch">tobias@luense.ch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><b>Lünse</b> · Vogel Bausoftware · Tobias Vogel · Aargau, Schweiz</span>
+    <span>© 2026 · Lokale Software für Bauunternehmen</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els=document.querySelectorAll('.rv');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+    },{threshold:.14,rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(e){io.observe(e)});
+  })();
+</script>
+</body>
+</html>
