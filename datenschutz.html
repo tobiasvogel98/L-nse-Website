@@ -211,6 +211,88 @@ footer a:hover{color:var(--orange)}
 .btn{border-radius:4px}
 .phone{border-radius:32px}
 
+/* ---------- Bewegung ---------- */
+/* Stationierung unter der Kopfzeile */
+.chain{position:absolute;left:0;right:0;bottom:-1px;height:3px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 12.5%);pointer-events:none}
+.chain-fill{position:absolute;inset:0;background:var(--orange);transform-origin:left;transform:scaleX(var(--p,0))}
+.chain-label{position:absolute;right:24px;top:100%;margin-top:6px;font-family:var(--mono);font-size:.72rem;font-weight:600;color:var(--head);background:var(--bar-bg);border:1px solid var(--line);border-radius:4px;padding:2px 7px;opacity:0;transition:opacity .3s}
+.scrolled .chain-label{opacity:1}
+@media(max-width:820px){.chain-label{display:none}}
+
+/* Markierlinie unter «verloren.» */
+.hl{position:relative;display:inline-block}
+.spray{position:absolute;left:-2%;bottom:-.12em;width:104%;height:.34em;overflow:visible;pointer-events:none}
+.spray path{fill:none;stroke:var(--orange);stroke-width:7;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;animation:spray .9s cubic-bezier(.6,.1,.3,1) .7s forwards;opacity:.85}
+@keyframes spray{to{stroke-dashoffset:0}}
+
+/* Einstieg */
+.hero-text>*{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.hero-text>:nth-child(2){animation-delay:.08s}.hero-text>:nth-child(3){animation-delay:.18s}
+.hero-text>:nth-child(4){animation-delay:.26s}.hero-text>:nth-child(5){animation-delay:.34s}
+.hero-visual .browser{animation:slidein .9s cubic-bezier(.2,.7,.2,1) .15s both}
+.hero-visual .phone-mini{animation:rise .8s cubic-bezier(.2,.7,.2,1) .75s both}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes slidein{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+
+/* Nachtrag läuft durch */
+.pipe{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:22px 26px 26px;margin:0 0 54px;max-width:900px}
+.pipe-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;margin-bottom:22px}
+.pipe-head b{font-family:var(--disp);font-size:1.3rem;font-weight:600;color:var(--head)}
+.pipe-sum{font-family:var(--disp);font-weight:700;font-size:1.3rem;color:var(--head)}
+.pipe-steps{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);position:relative}
+.pipe-steps::before,.pipe-steps::after{content:"";position:absolute;left:10%;right:10%;top:9px;height:2px;background:var(--line)}
+.pipe-steps::after{background:var(--orange);transform-origin:left;transform:scaleX(var(--pipe,1));transition:transform .45s ease}
+.pipe-steps li{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.pipe-steps .dot{width:20px;height:20px;border-radius:50%;background:var(--card);border:2px solid var(--orange);transition:background .3s,transform .3s}
+.pipe-steps li.on .dot{background:var(--orange)}
+.pipe-steps b{font-size:.95rem;font-weight:600;color:var(--head)}
+.pipe-steps time{font-family:var(--mono);font-size:.8rem;color:var(--mute)}
+.pipe-steps li:last-child.on b{color:var(--hl,var(--orange))}
+.pipe-note{margin-top:18px;font-size:.92rem;color:var(--mute)}
+@media(max-width:620px){.pipe{padding:18px 16px 20px}.pipe-steps b{font-size:.78rem}.pipe-steps time{font-size:.68rem}}
+.js .pipe-steps{--pipe:0}
+.js .pipe-steps li{opacity:.45;transition:opacity .3s}
+.js .pipe-steps li.on{opacity:1}
+.js .pipe-steps li.on .dot{transform:scale(1.15)}
+.js .pipe-steps li.on.done .dot{transform:none}
+.pipe-sum{transition:color .3s}
+.pipe.paid .pipe-sum{color:var(--hl,var(--orange))}
+
+/* Einblenden, nur einmal, nur mit JavaScript */
+.js .rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 70ms)}
+.js .rv.in{opacity:1;transform:none}
+.js .screen-row .browser{transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.js .screen-row:not(.in) .browser{opacity:0;transform:translateX(24px)}
+.js .screen-row.flip:not(.in) .browser{transform:translateX(-24px)}
+
+/* Ablauf: gestrichelte Verbindung zieht sich */
+.js .step::after{transform:scaleX(0);transform-origin:left;transition:transform .5s ease}
+.js .steps.in .step::after{transform:scaleX(1)}
+.js .steps.in .step:nth-child(2)::after{transition-delay:.35s}
+.js .steps.in .step:nth-child(3)::after{transition-delay:.7s}
+.js .step .n{transform:scale(.6);opacity:0;transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .3s}
+.js .steps.in .step .n{transform:none;opacity:1}
+.js .steps.in .step:nth-child(2) .n{transition-delay:.35s}
+.js .steps.in .step:nth-child(3) .n{transition-delay:.7s}
+.js .steps.in .step:nth-child(4) .n{transition-delay:1.05s}
+
+/* Kleinigkeiten */
+.btn-pri{transition:background .18s,transform .18s}
+.btn-pri:hover{transform:translateY(-1px)}
+.screen-row .browser{transition:box-shadow .3s}
+.screen-row .browser:hover{box-shadow:0 30px 60px -30px rgba(10,25,40,.55)}
+.faq details::details-content{transition:height .3s ease,content-visibility .3s allow-discrete;height:0;overflow:clip}
+.faq details[open]::details-content{height:auto}
+:root{interpolate-size:allow-keywords}
+
+@media(prefers-reduced-motion:reduce){
+  .hero-text>*,.hero-visual .browser,.hero-visual .phone-mini{animation:none}
+  .spray path{animation:none;stroke-dashoffset:0}
+  .js .rv,.js .screen-row .browser,.js .step::after,.js .step .n,.js .pipe-steps li{opacity:1!important;transform:none!important;transition:none!important}
+  .js .pipe-steps{--pipe:1}
+  .chain-fill{transition:none}
+}
+
 </style>
 </head>
 <body>
